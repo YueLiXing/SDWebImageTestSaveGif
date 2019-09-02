@@ -49,7 +49,7 @@
     }];
 }
 
-- (void)saveImage:(UIImage<SDAnimatedImage> *)image {
+- (void)saveImage:(UIImage *)image {
     [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
         if (PHAuthorizationStatusDenied == status || PHAuthorizationStatusAuthorized == status) {
             __block NSString * assetID = nil;
@@ -57,7 +57,8 @@
             
             NSData * tempData = nil;
             if ([image respondsToSelector:@selector(animatedImageData)]) {
-                tempData = [image animatedImageData];
+                UIImage<SDAnimatedImage> * aniImage = (UIImage<SDAnimatedImage> *)image;
+                tempData = [aniImage animatedImageData];
             } else {
                 tempData = [image sd_imageDataAsFormat:[image sd_imageFormat]];
             }
