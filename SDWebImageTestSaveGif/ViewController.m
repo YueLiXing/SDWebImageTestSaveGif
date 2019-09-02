@@ -49,16 +49,18 @@
     }];
 }
 
-- (void)saveImage:(SDAnimatedImage *)image {
+- (void)saveImage:(UIImage<SDAnimatedImage> *)image {
     [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
         if (PHAuthorizationStatusDenied == status || PHAuthorizationStatusAuthorized == status) {
             __block NSString * assetID = nil;
             NSString * filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%ld_%u.png", (NSInteger)[NSDate date].timeIntervalSince1970, arc4random()%10000]];
-            // bug is here
-            NSLog(@"sd_imageFormat: %ld", (long)[image sd_imageFormat]);
-            NSLog(@"animatedImageFormat: %ld", (long)[image animatedImageFormat]);
             
-            NSData * tempData = [image sd_imageDataAsFormat:[image sd_imageFormat]];
+            NSData * tempData = nil;
+            if ([image respondsToSelector:@selector(animatedImageData)]) {
+                tempData = [image animatedImageData];
+            } else {
+                tempData = [image sd_imageDataAsFormat:[image sd_imageFormat]];
+            }
             [tempData writeToFile:filePath atomically:YES];
             
             NSError * error = nil;
