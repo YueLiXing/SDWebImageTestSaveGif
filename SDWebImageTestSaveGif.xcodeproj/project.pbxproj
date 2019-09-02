@@ -29,6 +29,7 @@
 		CDE7390B231CBD54005C436E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CDE7390D231CBD54005C436E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CDE7390E231CBD54005C436E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CDE73915231CE316005C436E /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
 		DD77CC500BC2EDEAFD7CEE0D /* libPods-SDWebImageTestSaveGif.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SDWebImageTestSaveGif.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -86,6 +87,7 @@
 				CDE73900231CBD52005C436E /* AppDelegate.m */,
 				CDE73902231CBD52005C436E /* ViewController.h */,
 				CDE73903231CBD52005C436E /* ViewController.m */,
+				CDE73915231CE316005C436E /* Logger.h */,
 				CDE73905231CBD52005C436E /* Main.storyboard */,
 				CDE73908231CBD54005C436E /* Assets.xcassets */,
 				CDE7390A231CBD54005C436E /* LaunchScreen.storyboard */,

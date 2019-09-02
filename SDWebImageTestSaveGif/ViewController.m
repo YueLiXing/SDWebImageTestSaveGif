@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import <SDWebImage/SDWebImage.h>
 #import <Photos/Photos.h>
+#import "Logger.h"
 
 @interface ViewController ()
 
@@ -22,6 +23,7 @@
     [super viewDidLoad];
     
     self.gifURL = @"http://p5.gexing.com/GSF/biaoqing/20180813/20/4ghr1gkvwhu4e1hhofwi85ywd.jpg@!big.jpg";
+    self.gifURL = @"http://p5.gexing.com/GSF/biaoqing/20180709/23/4rkpwbitr690ixues6zlqtbc1.jpg@!big.jpg";
     
     SDAnimatedImageView * customImageView = [[SDAnimatedImageView alloc] initWithFrame:CGRectMake(20.0, 20.0, 100, 100)];
     [self.view addSubview:customImageView];
@@ -40,27 +42,45 @@
 }
 
 - (void)saveButtonClick {
-    [[SDWebImageManager sharedManager] loadImageWithURL:[NSURL URLWithString:self.gifURL] options:SDWebImageRetryFailed progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+    [[SDWebImageManager sharedManager] loadImageWithURL:[NSURL URLWithString:self.gifURL] options:0 progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
         if (image && finished) {
             [self saveImage:image];
         }
     }];
 }
 
-- (void)saveImage:(UIImage *)image {
+- (void)saveImage:(SDAnimatedImage *)image {
     [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
         if (PHAuthorizationStatusDenied == status || PHAuthorizationStatusAuthorized == status) {
             __block NSString * assetID = nil;
+            NSString * filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%ld_%u.png", (NSInteger)[NSDate date].timeIntervalSince1970, arc4random()%10000]];
+            // bug is here
+            NSLog(@"sd_imageFormat: %ld", (long)[image sd_imageFormat]);
+            NSLog(@"animatedImageFormat: %ld", (long)[image animatedImageFormat]);
+            
+            NSData * tempData = [image sd_imageDataAsFormat:[image sd_imageFormat]];
+            [tempData writeToFile:filePath atomically:YES];
+            
             NSError * error = nil;
             [[PHPhotoLibrary sharedPhotoLibrary] performChangesAndWait:^{
-                assetID = [PHAssetChangeRequest creationRequestForAssetFromImage:image].placeholderForCreatedAsset.localIdentifier;
+                
+                assetID = [PHAssetChangeRequest creationRequestForAssetFromImageAtFileURL:[NSURL fileURLWithPath:filePath]].placeholderForCreatedAsset.localIdentifier;
             } error:&error];
+            
             if (error) {
                 NSLog(@"%@", error);
                 return;
             } else {
                 NSLog(@"save success");
             }
+            NSLog(@"%@", [[NSFileManager defaultManager] subpathsAtPath:NSTemporaryDirectory()]);
+            [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error]; // 保存完成后删除缓存文件
+            if (error) {
+                NSLog(@"delete file faile %@", error);
+            } else {
+                NSLog(@"delete success");
+            }
+            NSLog(@"%@", [[NSFileManager defaultManager] subpathsAtPath:NSTemporaryDirectory()]);
         }
     }];
 }
